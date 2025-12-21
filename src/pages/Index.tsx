@@ -114,11 +114,31 @@ const WATER_INDEXES = {
 } as const;
 
 const ULD_TYPES = {
-  'AKE': 70,
-  'PMC': 85,
-  'PAG': 80,
+  // Narrow Body
+  'AKH': 74,
+  'PKC': 37,
+  // Wide Body
+  'AKE': 63,
   'PLA': 90,
+  'PMC': 91,
+  'PAG': 85,
+  'QKE': 76,
 } as const;
+
+const EIC_DEFAULTS = {
+  'A319': { weight: 35, compartment: 'Compartment 5' },
+  'A320': { weight: 35, compartment: 'Compartment 5' },
+  'A321': { weight: 35, compartment: 'Compartment 5' },
+  'B737': { weight: 23, compartment: 'Compartment 4' },
+  'A330': { weight: 58, compartment: 'Compartment 5' },
+  'B787': { weight: 30, compartment: 'Compartment 5' },
+  'B777': { weight: 30, compartment: 'Compartment 5' },
+  'A350': { weight: 30, compartment: 'Compartment 5' },
+} as const;
+
+// Define specific ULD lists
+const ULD_LIST_NARROW = ['AKH', 'PKC'];
+const ULD_LIST_WIDE = ['AKE', 'PLA', 'PMC', 'PAG', 'PKC', 'QKE'];
 
 const AIRCRAFT_CONFIGS = {
   'A319': {
@@ -194,6 +214,94 @@ type AircraftConfig = IAircraftConfig;
 // Previously: typeof AIRCRAFT_CONFIGS[keyof typeof AIRCRAFT_CONFIGS];
 // We override this to be more permissive for the build.
 
+// Translations
+const TRANSLATIONS = {
+  TR: {
+    appTitle: '✈️ Uçak Kargo Yöneticisi',
+    appSubtitle: 'Balans hesaplama yardım sistemi',
+    appFooter: 'Muhammed Enes İŞCAN tarafından geliştirildi',
+    radioactive: 'Radyoaktif Kargo Girişi',
+    aircraftSelectTitle: 'Uçak Seçimi',
+    aircraftSelectPlaceholder: 'Uçak modelini seçin',
+    wideBodyLabel: 'Geniş Gövde (A330/A350/B777/B787)',
+    loadingTypeTitle: 'Yükleme Tipi',
+    bulkLoading: 'Bulk Yükleme',
+    uldLoading: 'ULD Yükleme',
+    totalBags: 'Toplam Bagaj Sayısı',
+    totalBagWeight: 'Toplam Bagaj Ağırlığı (kg)',
+    avgBagWeight: 'Ortalama Bagaj Ağırlığı (kg)',
+    waterPercentTitle: 'Su Yüzdesi Seçimi',
+    waterPercentWideTitle: 'Su Yüzdesi (Geniş Gövde)',
+    aircraftType: 'Uçak Tipi',
+    tailNumber: 'Kuyruk (Örn: JNA)',
+    tailPlaceholder: 'Kuyruk Giriniz',
+    tailNotFound: 'Kuyruk listede bulunamadı! Lütfen kontrol ediniz.',
+    waterRatio: 'Su Oranı',
+    aircraft: 'Uçak',
+    percent: 'Yüzde',
+    indexMac: 'İndeks / MAC',
+    compartments: 'Kompartmanlar',
+    bagCount: 'Bagaj Sayısı',
+    cargoWeight: 'Kargo Ağırlığı', // For Bulk
+    cargoWeightKg: 'Kargo Ağırlığı (kg)',
+    emptyUld: 'Boş ULD',
+    uldTypeData: 'ULD Tipi / Ağırlığı',
+    uldWeight: 'ULD Ağırlığı (kg)',
+    eicSettings: 'EIC Ayarları',
+    eicWeight: 'EIC Ağırlığı (kg)',
+    eicComp: 'EIC Kompartmanı',
+    eicModelSelect: 'Uçak Tipi (EIC Varsayılanı İçin)',
+    modelSelectPlace: 'Model Seçin',
+    selectPlace: 'Seçin',
+    total: 'Toplam:',
+    confirmClear: 'Tüm verileri temizlemek istediğinize emin misiniz?',
+    type: 'Tip',
+  },
+  EN: {
+    appTitle: '✈️ Aircraft Cargo Manager',
+    appSubtitle: 'Balance calculation assistant system',
+    appFooter: 'Developed by Muhammed Enes ISCAN',
+    radioactive: 'Radioactive Cargo Entry',
+    aircraftSelectTitle: 'Aircraft Selection',
+    aircraftSelectPlaceholder: 'Select aircraft model',
+    wideBodyLabel: 'Wide Body (A330/A350/B777/B787)',
+    loadingTypeTitle: 'Loading Type',
+    bulkLoading: 'Bulk Loading',
+    uldLoading: 'ULD Loading',
+    totalBags: 'Total Baggage Count',
+    totalBagWeight: 'Total Baggage Weight (kg)',
+    avgBagWeight: 'Average Baggage Weight (kg)',
+    waterPercentTitle: 'Water Percentage Selection',
+    waterPercentWideTitle: 'Water Percentage (Wide Body)',
+    aircraftType: 'Aircraft Type',
+    tailNumber: 'Tail (e.g. JNA)',
+    tailPlaceholder: 'Enter Tail',
+    tailNotFound: 'Tail not found in list! Please check.',
+    waterRatio: 'Water Ratio',
+    aircraft: 'Aircraft',
+    percent: 'Percent',
+    indexMac: 'Index / MAC',
+    compartments: 'Compartments',
+    bagCount: 'Baggage Count',
+    cargoWeight: 'Cargo Weight',
+    cargoWeightKg: 'Cargo Weight (kg)',
+    emptyUld: 'Empty ULD',
+    uldTypeData: 'ULD Type / Weight',
+    uldWeight: 'ULD Weight (kg)',
+    eicSettings: 'EIC Settings',
+    eicWeight: 'EIC Weight (kg)',
+    eicComp: 'EIC Compartment',
+    eicModelSelect: 'Aircraft Type (For EIC Default)',
+    modelSelectPlace: 'Select Model',
+    selectPlace: 'Select',
+    total: 'Total:',
+    confirmClear: 'Are you sure you want to clear all data?',
+    type: 'Type',
+  }
+} as const;
+
+type Language = 'TR' | 'EN';
+
 const DigitalClock = React.memo(({ type }: { type: 'local' | 'utc' }) => {
   const [time, setTime] = useState(new Date());
 
@@ -211,6 +319,7 @@ const DigitalClock = React.memo(({ type }: { type: 'local' | 'utc' }) => {
   }, [time, type]);
 
   return (
+
     <span className="text-xs font-mono font-medium text-gray-500 dark:text-slate-400 w-12 text-center select-none">
       {formattedTime}
     </span>
@@ -220,13 +329,30 @@ DigitalClock.displayName = 'DigitalClock';
 
 interface HeaderProps {
   onClearData: () => void;
+  language: Language;
+  onToggleLanguage: () => void;
 }
-const Header = React.memo(({ onClearData }: HeaderProps) => (
-  <div className="text-center space-y-4 mb-6">
-    <div className="space-y-1">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">✈️ Uçak Kargo Yöneticisi</h1>
-      <p className="text-sm text-gray-600 dark:text-slate-400">Balans hesaplama yardım sistemi</p>
-      <p className="text-xs text-gray-400 dark:text-slate-500 opacity-60">Muhammed Enes İŞCAN tarafından geliştirildi</p>
+const Header = React.memo(({ onClearData, language, onToggleLanguage }: HeaderProps) => (
+  <div className="text-center space-y-4 mb-6 relative">
+    {/* Language Toggle - Absolute Top Left/Right or just centered? User said "en üste ufak TR ve EN yazısı lazım" 
+        "başsına bir tane EN koy" -> Maybe top left or right corner? 
+        I'll put it top right absolute.
+    */}
+    <div className="absolute top-0 right-0">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={onToggleLanguage}
+        className="text-xs font-bold px-2 py-1 h-auto"
+      >
+        {language === 'TR' ? 'EN' : 'TR'}
+      </Button>
+    </div>
+
+    <div className="space-y-1 pt-2">
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">{TRANSLATIONS[language].appTitle}</h1>
+      <p className="text-sm text-gray-600 dark:text-slate-400">{TRANSLATIONS[language].appSubtitle}</p>
+      <p className="text-xs text-gray-400 dark:text-slate-500 opacity-60">{TRANSLATIONS[language].appFooter}</p>
     </div>
 
     <div className="flex items-center justify-center gap-3 bg-white/50 dark:bg-slate-800/50 p-2 rounded-lg w-fit mx-auto backdrop-blur-sm">
@@ -293,33 +419,34 @@ const AirportSelector: React.FC<AirportSelectorProps> = React.memo(({ iataCode, 
 ));
 AirportSelector.displayName = 'AirportSelector';
 
-const RadioactiveToggleButton = ({ show, onToggle }: { show: boolean, onToggle: (checked: boolean) => void }) => (
+const RadioactiveToggleButton = ({ show, onToggle, language }: { show: boolean, onToggle: (checked: boolean) => void, language: Language }) => (
   <div className="flex items-center gap-2 mt-2">
     <Switch id="radioactive-toggle" checked={show} onCheckedChange={onToggle} />
-    <Label htmlFor="radioactive-toggle" className="text-xs cursor-pointer">Radyoaktif Kargo Girişi</Label>
+    <Label htmlFor="radioactive-toggle" className="text-xs cursor-pointer">{TRANSLATIONS[language].radioactive}</Label>
   </div>
 );
 
 interface AircraftSelectorProps {
   selectedAircraft: keyof typeof AIRCRAFT_CONFIGS | '';
   onAircraftSelect: (aircraft: string) => void;
+  language: Language;
 }
-const AircraftSelector: React.FC<AircraftSelectorProps> = React.memo(({ selectedAircraft, onAircraftSelect }) => (
+const AircraftSelector: React.FC<AircraftSelectorProps> = React.memo(({ selectedAircraft, onAircraftSelect, language }) => (
   <Card>
     <CardHeader className="pb-3">
-      <CardTitle className="text-lg">Uçak Seçimi</CardTitle>
+      <CardTitle className="text-lg">{TRANSLATIONS[language].aircraftSelectTitle}</CardTitle>
     </CardHeader>
     <CardContent>
       <Select value={selectedAircraft} onValueChange={onAircraftSelect}>
         <SelectTrigger>
-          <SelectValue placeholder="Uçak modelini seçin" />
+          <SelectValue placeholder={TRANSLATIONS[language].aircraftSelectPlaceholder} />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="A319">Airbus A319</SelectItem>
           <SelectItem value="A320">Airbus A320</SelectItem>
           <SelectItem value="A321">Airbus A321</SelectItem>
           <SelectItem value="B737">Boeing 737</SelectItem>
-          <SelectItem value="WIDE_BODY">Geniş Gövde (A330/A350/B777/B787)</SelectItem>
+          <SelectItem value="WIDE_BODY">{TRANSLATIONS[language].wideBodyLabel}</SelectItem>
         </SelectContent>
       </Select>
     </CardContent>
@@ -337,14 +464,15 @@ interface LoadingTypeSelectorProps {
   setPlanBaggageCount: React.Dispatch<React.SetStateAction<number | ''>>;
   setPlanBaggageWeight: React.Dispatch<React.SetStateAction<number | ''>>;
   setAverageBaggageWeight: React.Dispatch<React.SetStateAction<number | ''>>;
+  language: Language;
 }
 const LoadingTypeSelector: React.FC<LoadingTypeSelectorProps> = React.memo(({
   loadingType, selectedAircraft, planBaggageCount, planBaggageWeight, averageBaggageWeight,
-  onLoadingTypeSelect, setPlanBaggageCount, setPlanBaggageWeight, setAverageBaggageWeight
+  onLoadingTypeSelect, setPlanBaggageCount, setPlanBaggageWeight, setAverageBaggageWeight, language
 }) => (
   <Card>
     <CardHeader className="pb-3">
-      <CardTitle className="text-lg">Yükleme Tipi</CardTitle>
+      <CardTitle className="text-lg">{TRANSLATIONS[language].loadingTypeTitle}</CardTitle>
     </CardHeader>
     <CardContent>
       <div className="grid grid-cols-2 gap-3">
@@ -355,7 +483,7 @@ const LoadingTypeSelector: React.FC<LoadingTypeSelectorProps> = React.memo(({
           type="button"
           disabled={selectedAircraft === 'WIDE_BODY'}
         >
-          Bulk Yükleme
+          {TRANSLATIONS[language].bulkLoading}
         </Button>
         {selectedAircraft !== 'B737' && (
           <Button
@@ -364,7 +492,7 @@ const LoadingTypeSelector: React.FC<LoadingTypeSelectorProps> = React.memo(({
             className="h-12"
             type="button"
           >
-            ULD Yükleme
+            {TRANSLATIONS[language].uldLoading}
           </Button>
         )}
       </div>
@@ -372,7 +500,7 @@ const LoadingTypeSelector: React.FC<LoadingTypeSelectorProps> = React.memo(({
         <div className="space-y-4 bg-blue-50 dark:bg-slate-900/50 p-4 rounded-lg mt-4 border border-blue-100 dark:border-slate-800">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label className="text-xs">Toplam Bagaj Sayısı</Label>
+              <Label className="text-xs">{TRANSLATIONS[language].totalBags}</Label>
               <Input
                 type="number"
                 inputMode="decimal"
@@ -396,7 +524,7 @@ const LoadingTypeSelector: React.FC<LoadingTypeSelectorProps> = React.memo(({
               />
             </div>
             <div>
-              <Label className="text-xs">Toplam Bagaj Ağırlığı (kg)</Label>
+              <Label className="text-xs">{TRANSLATIONS[language].totalBagWeight}</Label>
               <Input
                 type="number"
                 inputMode="decimal"
@@ -418,7 +546,7 @@ const LoadingTypeSelector: React.FC<LoadingTypeSelectorProps> = React.memo(({
             </div>
           </div>
           <div>
-            <Label htmlFor="avg-baggage-weight" className="text-xs">Ortalama Bagaj Ağırlığı (kg)</Label>
+            <Label htmlFor="avg-baggage-weight" className="text-xs">{TRANSLATIONS[language].avgBagWeight}</Label>
             <Input
               id="avg-baggage-weight"
               type="number"
@@ -454,8 +582,9 @@ interface WaterPercentSelectorProps {
   selectedWaterPercent: string;
   selectedAircraft: keyof typeof AIRCRAFT_CONFIGS | '';
   onWaterPercentSelect: (percent: string) => void;
+  language: Language;
 }
-const WaterPercentSelector: React.FC<WaterPercentSelectorProps> = React.memo(({ selectedWaterPercent, selectedAircraft, onWaterPercentSelect }) => {
+const WaterPercentSelector: React.FC<WaterPercentSelectorProps> = React.memo(({ selectedWaterPercent, selectedAircraft, onWaterPercentSelect, language }) => {
   const [wideBodyModel, setWideBodyModel] = useState<string>('');
   const [tailNumber, setTailNumber] = useState<string>('');
 
@@ -527,15 +656,15 @@ const WaterPercentSelector: React.FC<WaterPercentSelectorProps> = React.memo(({ 
     return (
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Su Yüzdesi (Geniş Gövde)</CardTitle>
+          <CardTitle className="text-lg">{TRANSLATIONS[language].waterPercentWideTitle}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label className="text-xs">Uçak Tipi</Label>
+              <Label className="text-xs">{TRANSLATIONS[language].aircraftType}</Label>
               <Select value={wideBodyModel} onValueChange={setWideBodyModel}>
                 <SelectTrigger className="h-8">
-                  <SelectValue placeholder="Seçiniz" />
+                  <SelectValue placeholder={TRANSLATIONS[language].selectPlace} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="A330">Airbus A330</SelectItem>
@@ -548,14 +677,14 @@ const WaterPercentSelector: React.FC<WaterPercentSelectorProps> = React.memo(({ 
 
             {(wideBodyModel === 'A330' || wideBodyModel === 'A350') && (
               <div>
-                <Label className="text-xs">Kuyruk (Örn: JNA)</Label>
+                <Label className="text-xs">{TRANSLATIONS[language].tailNumber}</Label>
                 <Input
                   value={tailNumber}
                   onChange={(e) => {
                     const val = e.target.value.toUpperCase();
                     if (val.length <= 3) setTailNumber(val);
                   }}
-                  placeholder="Kuyruk Giriniz"
+                  placeholder={TRANSLATIONS[language].tailPlaceholder}
                   className="h-8 text-xs font-mono"
                   maxLength={3}
                 />
@@ -565,13 +694,13 @@ const WaterPercentSelector: React.FC<WaterPercentSelectorProps> = React.memo(({ 
 
           {wideBodyResult === 'NOT_FOUND' && tailNumber.length === 3 && (
             <div className="p-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-xs rounded border border-red-200 dark:border-red-800">
-              Kuyruk listede bulunamadı! Lütfen kontrol ediniz.
+              {TRANSLATIONS[language].tailNotFound}
             </div>
           )}
 
           {typeof wideBodyResult === 'object' && wideBodyResult !== null && (
             <div className="space-y-2">
-              <Label className="text-xs">Su Oranı</Label>
+              <Label className="text-xs">{TRANSLATIONS[language].waterRatio}</Label>
               <div className="flex flex-wrap gap-2">
                 {options.map(opt => (
                   <Button
@@ -602,7 +731,7 @@ const WaterPercentSelector: React.FC<WaterPercentSelectorProps> = React.memo(({ 
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">Su Yüzdesi Seçimi</CardTitle>
+        <CardTitle className="text-lg">{TRANSLATIONS[language].waterPercentTitle}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex gap-2 mb-4">
@@ -621,9 +750,9 @@ const WaterPercentSelector: React.FC<WaterPercentSelectorProps> = React.memo(({ 
             <table className="w-full border-collapse border border-gray-200 dark:border-slate-700">
               <thead>
                 <tr className="bg-gray-50 dark:bg-slate-800">
-                  <th className="border border-gray-200 dark:border-slate-700 px-4 py-2 text-left text-sm text-gray-700 dark:text-slate-300">Uçak</th>
-                  <th className="border border-gray-200 dark:border-slate-700 px-4 py-2 text-left text-sm text-gray-700 dark:text-slate-300">Yüzde</th>
-                  <th className="border border-gray-200 dark:border-slate-700 px-4 py-2 text-left text-sm text-gray-700 dark:text-slate-300">İndeks / MAC</th>
+                  <th className="border border-gray-200 dark:border-slate-700 px-4 py-2 text-left text-sm text-gray-700 dark:text-slate-300">{TRANSLATIONS[language].aircraft}</th>
+                  <th className="border border-gray-200 dark:border-slate-700 px-4 py-2 text-left text-sm text-gray-700 dark:text-slate-300">{TRANSLATIONS[language].percent}</th>
+                  <th className="border border-gray-200 dark:border-slate-700 px-4 py-2 text-left text-sm text-gray-700 dark:text-slate-300">{TRANSLATIONS[language].indexMac}</th>
                 </tr>
               </thead>
               <tbody>
@@ -676,16 +805,17 @@ interface CompartmentsSectionProps {
   onAddSubCompartment?: (compartment: string) => void;
   onRemoveSubCompartment?: (compartment: string) => void;
   wideBodySubCompartments?: Record<string, string[]>;
+  language: Language;
 }
 const CompartmentsSection: React.FC<CompartmentsSectionProps> = React.memo(({
   aircraftConfig, loadingType, compartmentData, uldWeights, emptyUldPositions,
   calculateCompartmentWeight, updateCompartmentData, setUldWeights, setEmptyUldPositions,
-  onAddSubCompartment, onRemoveSubCompartment, wideBodySubCompartments
+  onAddSubCompartment, onRemoveSubCompartment, wideBodySubCompartments, language
 }) => (
   <Card>
     <CardHeader className="pb-3">
       <CardTitle className="text-lg flex justify-between items-center">
-        Kompartmanlar
+        {TRANSLATIONS[language].compartments}
         <Badge variant="secondary" className="text-xs">
           {aircraftConfig?.name}
         </Badge>
@@ -735,7 +865,7 @@ const CompartmentsSection: React.FC<CompartmentsSectionProps> = React.memo(({
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-xs">Bagaj Sayısı</Label>
+                  <Label className="text-xs">{TRANSLATIONS[language].bagCount}</Label>
                   <div className="flex mt-1">
                     <Button
                       variant="outline"
@@ -774,7 +904,7 @@ const CompartmentsSection: React.FC<CompartmentsSectionProps> = React.memo(({
                   </div>
                 </div>
                 <div>
-                  <Label className="text-xs">Kargo Ağırlığı (kg)</Label>
+                  <Label className="text-xs">{TRANSLATIONS[language].cargoWeightKg}</Label>
                   <Input
                     type="number"
                     min="0"
@@ -806,7 +936,7 @@ const CompartmentsSection: React.FC<CompartmentsSectionProps> = React.memo(({
 
                       {!position.includes('Bulk') && (
                         <div className="flex items-center gap-1">
-                          <Label className="text-[10px]" htmlFor={`empty-${positionKey}`}>Boş ULD</Label>
+                          <Label className="text-[10px]" htmlFor={`empty-${positionKey}`}>{TRANSLATIONS[language].emptyUld}</Label>
                           <Switch
                             id={`empty-${positionKey}`}
                             className="scale-75"
@@ -817,9 +947,16 @@ const CompartmentsSection: React.FC<CompartmentsSectionProps> = React.memo(({
                                 updateCompartmentData(positionKey, 'baggageCount', 0);
                                 updateCompartmentData(positionKey, 'cargoWeight', 0);
                                 // Set weight based on current selected type
-                                const currentType = compartmentData[positionKey]?.uldType || 'AKE';
-                                const weight = ULD_TYPES[currentType] || 65;
+                                const currentType = compartmentData[positionKey]?.uldType || (aircraftConfig?.isWideBody ? 'AKE' : 'AKH');
+                                const weight = ULD_TYPES[currentType] || (aircraftConfig?.isWideBody ? 63 : 74);
                                 setUldWeights(prev => ({ ...prev, [positionKey]: weight }));
+                              } else {
+                                // If unchecked, reset weight to 0 so it disappears/resets
+                                setUldWeights(prev => {
+                                  const newState = { ...prev };
+                                  delete newState[positionKey];
+                                  return newState;
+                                });
                               }
                             }}
                           />
@@ -830,7 +967,7 @@ const CompartmentsSection: React.FC<CompartmentsSectionProps> = React.memo(({
                     <div className="space-y-2">
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <Label className="text-xs">Bagaj Sayısı</Label>
+                          <Label className="text-xs">{TRANSLATIONS[language].bagCount}</Label>
                           <div className="flex mt-1">
                             <Button
                               variant="outline"
@@ -872,7 +1009,7 @@ const CompartmentsSection: React.FC<CompartmentsSectionProps> = React.memo(({
                           </div>
                         </div>
                         <div>
-                          <Label className="text-xs">Kargo Ağırlığı</Label>
+                          <Label className="text-xs">{TRANSLATIONS[language].cargoWeight}</Label>
                           <Input
                             type="number"
                             min="0"
@@ -890,14 +1027,14 @@ const CompartmentsSection: React.FC<CompartmentsSectionProps> = React.memo(({
 
                       {!position.includes('Bulk') && compartment !== 'Compartment 5' && (
                         <div>
-                          <Label className="text-xs">ULD Tipi / Ağırlığı</Label>
+                          <Label className="text-xs">{TRANSLATIONS[language].uldTypeData}</Label>
                           <div className="flex gap-1 mt-1">
                             <Select
-                              value={compartmentData[positionKey]?.uldType || 'AKE'}
+                              value={compartmentData[positionKey]?.uldType || (aircraftConfig?.isWideBody ? 'AKE' : 'AKH')}
                               onValueChange={(value) => {
                                 const type = value as keyof typeof ULD_TYPES;
                                 updateCompartmentData(positionKey, 'uldType', type as any);
-                                const weight = ULD_TYPES[type] || 65;
+                                const weight = ULD_TYPES[type] || 0;
                                 setUldWeights(prev => ({ ...prev, [positionKey]: weight }));
                               }}
                             >
@@ -905,9 +1042,9 @@ const CompartmentsSection: React.FC<CompartmentsSectionProps> = React.memo(({
                                 <SelectValue placeholder="Tip" />
                               </SelectTrigger>
                               <SelectContent>
-                                {Object.entries(ULD_TYPES).map(([key, weight]) => (
+                                {(aircraftConfig?.isWideBody ? ULD_LIST_WIDE : ULD_LIST_NARROW).map((key) => (
                                   <SelectItem key={key} value={key} className="text-xs">
-                                    {key} ({weight}kg)
+                                    {key} ({ULD_TYPES[key as keyof typeof ULD_TYPES]}kg)
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -957,47 +1094,80 @@ interface EICSettingsProps {
   aircraftConfig: AircraftConfig | null;
   setEicWeight: React.Dispatch<React.SetStateAction<number>>;
   setEicCompartment: React.Dispatch<React.SetStateAction<string>>;
+  language: Language;
 }
-const EICSettings: React.FC<EICSettingsProps> = React.memo(({ eicWeight, eicCompartment, aircraftConfig, setEicWeight, setEicCompartment }) => (
-  <Card className="bg-green-50 border-green-200 dark:bg-emerald-950/30 dark:border-emerald-900/50">
-    <CardHeader className="pb-3">
-      <CardTitle className="text-sm">EIC Ayarları</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <Label htmlFor="eic-weight" className="text-xs">EIC Ağırlığı (kg)</Label>
-          <Input
-            id="eic-weight"
-            type="number"
-            value={eicWeight}
-            onChange={(e) => {
-              const value = e.target.value;
-              setEicWeight(Number(value));
-            }}
-            className="mt-1 h-8 text-sm"
-            min="0"
-          />
+const EICSettings: React.FC<EICSettingsProps> = React.memo(({ eicWeight, eicCompartment, aircraftConfig, setEicWeight, setEicCompartment, language }) => {
+  const [subType, setSubType] = useState<string>('');
+
+  const handleSubTypeChange = (type: string) => {
+    setSubType(type);
+    const defaults = EIC_DEFAULTS[type as keyof typeof EIC_DEFAULTS];
+    if (defaults) {
+      setEicWeight(defaults.weight);
+      // Auto-set compartment if it exists in current config
+      if (aircraftConfig?.compartments.includes(defaults.compartment)) {
+        setEicCompartment(defaults.compartment);
+      }
+    }
+  };
+
+  return (
+    <Card className="bg-green-50 border-green-200 dark:bg-emerald-950/30 dark:border-emerald-900/50">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm">{TRANSLATIONS[language].eicSettings}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {aircraftConfig?.isWideBody && (
+          <div className="mb-3">
+            <Label className="text-xs">{TRANSLATIONS[language].eicModelSelect}</Label>
+            <Select value={subType} onValueChange={handleSubTypeChange}>
+              <SelectTrigger className="h-8 text-sm mt-1">
+                <SelectValue placeholder={TRANSLATIONS[language].modelSelectPlace} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="A330">A330</SelectItem>
+                <SelectItem value="B787">B787</SelectItem>
+                <SelectItem value="B777">B777</SelectItem>
+                <SelectItem value="A350">A350</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Label htmlFor="eic-weight" className="text-xs">{TRANSLATIONS[language].eicWeight}</Label>
+            <Input
+              id="eic-weight"
+              type="number"
+              value={eicWeight}
+              onChange={(e) => {
+                const value = e.target.value;
+                setEicWeight(Number(value));
+              }}
+              className="mt-1 h-8 text-sm"
+              min="0"
+            />
+          </div>
+          <div>
+            <Label htmlFor="eic-compartment" className="text-xs">{TRANSLATIONS[language].eicComp}</Label>
+            <Select value={eicCompartment} onValueChange={setEicCompartment}>
+              <SelectTrigger className="mt-1 h-8 text-sm">
+                <SelectValue placeholder={TRANSLATIONS[language].selectPlace} />
+              </SelectTrigger>
+              <SelectContent>
+                {aircraftConfig?.compartments.map((compartment) => (
+                  <SelectItem key={compartment} value={compartment}>
+                    {compartment}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <div>
-          <Label htmlFor="eic-compartment" className="text-xs">EIC Kompartmanı</Label>
-          <Select value={eicCompartment} onValueChange={setEicCompartment}>
-            <SelectTrigger className="h-8 text-sm">
-              <SelectValue placeholder="Seçin" />
-            </SelectTrigger>
-            <SelectContent>
-              {aircraftConfig?.compartments.map((compartment) => (
-                <SelectItem key={compartment} value={compartment}>
-                  {compartment}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-));
+      </CardContent>
+    </Card>
+  );
+});
 EICSettings.displayName = 'EICSettings';
 
 interface WeightSummaryProps {
@@ -1005,8 +1175,9 @@ interface WeightSummaryProps {
   eicCompartment: string;
   calculateTotalWeight: () => number;
   calculateCompartmentWeight: (compartment: string) => number;
+  language: Language;
 }
-const WeightSummary: React.FC<WeightSummaryProps> = React.memo(({ aircraftConfig, eicCompartment, calculateTotalWeight, calculateCompartmentWeight }) => (
+const WeightSummary: React.FC<WeightSummaryProps> = React.memo(({ aircraftConfig, eicCompartment, calculateTotalWeight, calculateCompartmentWeight, language }) => (
   <Card>
     <CardContent>
       <div className="space-y-2 p-4 bg-blue-50 dark:bg-slate-900/50 rounded-lg border border-blue-100 dark:border-slate-800">
@@ -1025,7 +1196,7 @@ const WeightSummary: React.FC<WeightSummaryProps> = React.memo(({ aircraftConfig
           ))}
         <Separator className="dark:bg-slate-700" />
         <div className="flex justify-between items-center">
-          <span className="font-semibold text-gray-900 dark:text-slate-100">Toplam:</span>
+          <span className="font-semibold text-gray-900 dark:text-slate-100">{TRANSLATIONS[language].total}</span>
           <Badge className="text-base px-3 py-1 bg-primary text-primary-foreground dark:bg-blue-600">
             {calculateTotalWeight().toFixed(1)} kg
           </Badge>
@@ -1087,8 +1258,14 @@ const Index = () => {
     'Compartment 4': [],
   });
 
+  const [language, setLanguage] = usePersistentState<Language>('language', 'TR');
+
+  const handleToggleLanguage = useCallback(() => {
+    setLanguage(prev => prev === 'TR' ? 'EN' : 'TR');
+  }, []);
+
   const handleClearData = useCallback(() => {
-    if (confirm('Tüm verileri temizlemek istediğinize emin misiniz?')) {
+    if (confirm(TRANSLATIONS[language].confirmClear)) {
       setSelectedAircraft('');
       setLoadingType('');
       setPlanBaggageCount('');
@@ -1175,14 +1352,15 @@ const Index = () => {
     // Auto-set loading type for Wide Body
     if (ac === 'WIDE_BODY') {
       setLoadingType('uld');
-    }
-
-    if (ac === 'B737') {
-      setEicWeight(23);
-      setEicCompartment('Compartment 4');
-    } else {
-      setEicWeight(35);
-      setEicCompartment('Compartment 5');
+      // Set initial EIC placeholders, will be updated by specific selection
+      setEicWeight(0);
+    } else if (ac) {
+      // Standard Narrow body defaults
+      const defaults = EIC_DEFAULTS[ac as keyof typeof EIC_DEFAULTS];
+      if (defaults) {
+        setEicWeight(defaults.weight);
+        setEicCompartment(defaults.compartment);
+      }
     }
   }, []);
 
@@ -1214,7 +1392,17 @@ const Index = () => {
         const isAirbusAircraft = ['A319', 'A320', 'A321'].includes(selectedAircraft);
 
         if (isUldPosition && !isCompartment5Position && value > 0) {
-          setUldWeights(prevUld => ({ ...prevUld, [compartment]: 65 }));
+          const defaultWeight = selectedAircraft === 'WIDE_BODY' ? 63 : 74;
+          setUldWeights(prevUld => {
+            // If weight is already set (non-zero), don't overwrite it?
+            // User says "bagaj girince 65 e gidiyor". Only set default if it's 0 or undefined.
+            // But existing code overwrote it unconditionally: `({ ...prevUld, [compartment]: 65 })`.
+            // I should probably preserve existing weight if it's there?
+            // If I manually changed weight before, I don't want it reset.
+            const currentWeight = prevUld[compartment];
+            if (currentWeight && currentWeight > 0) return prevUld;
+            return { ...prevUld, [compartment]: defaultWeight };
+          });
         } else if (isCompartment5Position && isAirbusAircraft) {
           setUldWeights(prevUld => ({ ...prevUld, [compartment]: 0 }));
         }
@@ -1249,7 +1437,7 @@ const Index = () => {
         if (!isCompartment5 && !position.includes('Bulk')) {
           uldWeight = uldWeights[positionKey] ?? 0;
           if ((baggageWeight > 0 || cargoWeight > 0) && uldWeight === 0) {
-            uldWeight = 65;
+            uldWeight = selectedAircraft === 'WIDE_BODY' ? 63 : 74;
           }
         }
 
@@ -1274,17 +1462,17 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-950 dark:to-slate-900 p-4 transition-colors duration-300">
       <div className="max-w-md mx-auto space-y-6 pb-12">
-        <Header onClearData={handleClearData} />
+        <Header onClearData={handleClearData} language={language} onToggleLanguage={handleToggleLanguage} />
         <AirportSelector iataCode={iataCode} setIataCode={setIataCode} airportInfo={airportInfo} setAirportInfo={setAirportInfo} />
 
-        <RadioactiveToggleButton show={showRadioactive} onToggle={setShowRadioactive} />
+        <RadioactiveToggleButton show={showRadioactive} onToggle={setShowRadioactive} language={language} />
         {showRadioactive && (
           <div className="pt-2 border-t dark:border-slate-700">
             <RadioactiveCheck />
           </div>
         )}
 
-        <AircraftSelector selectedAircraft={selectedAircraft} onAircraftSelect={handleAircraftSelect} />
+        <AircraftSelector selectedAircraft={selectedAircraft} onAircraftSelect={handleAircraftSelect} language={language} />
 
         <Accordion type="single" collapsible className="w-full bg-white/50 dark:bg-slate-800/50 rounded-lg">
           <AccordionItem value="settings" className="border-none">
@@ -1296,6 +1484,7 @@ const Index = () => {
                 selectedWaterPercent={selectedWaterPercent}
                 selectedAircraft={selectedAircraft}
                 onWaterPercentSelect={setSelectedWaterPercent}
+                language={language}
               />
             </AccordionContent>
           </AccordionItem>
@@ -1312,6 +1501,7 @@ const Index = () => {
               setPlanBaggageCount={setPlanBaggageCount}
               setPlanBaggageWeight={setPlanBaggageWeight}
               setAverageBaggageWeight={setAverageBaggageWeight}
+              language={language}
             />
             {loadingType && (
               <>
@@ -1329,6 +1519,7 @@ const Index = () => {
                   onAddSubCompartment={handleAddSubCompartment}
                   onRemoveSubCompartment={handleRemoveSubCompartment}
                   wideBodySubCompartments={wideBodySubCompartments}
+                  language={language}
                 />
                 <EICSettings
                   eicWeight={eicWeight}
@@ -1336,12 +1527,14 @@ const Index = () => {
                   aircraftConfig={aircraftConfig as any}
                   setEicWeight={setEicWeight}
                   setEicCompartment={setEicCompartment}
+                  language={language}
                 />
                 <WeightSummary
                   aircraftConfig={aircraftConfig as any}
                   eicCompartment={eicCompartment}
                   calculateTotalWeight={calculateTotalWeight}
                   calculateCompartmentWeight={calculateCompartmentWeight}
+                  language={language}
                 />
               </>
             )}

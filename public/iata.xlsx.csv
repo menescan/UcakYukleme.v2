@@ -21,7 +21,7 @@ Adana,Turkiye,ADA
 Addis Ababa - Bole International Airport,Ethiopia,ADD
 Adelaide,Australia,ADL
 Aden - Aden International Airport,Yemen,ADE
-Adiyaman,Turkiye,ADF
+Adıyaman Havalimanı (Gümrüksüz),Turkiye,ADF
 Adler/Sochi,Russia,AER
 Agades,Niger,AJY
 Agadir,Morocco,AGA
@@ -29,6 +29,7 @@ Agana (Hagåtña),Guam,GUM
 Aggeneys,South Africa,AGZ
 Aguadilla,Puerto Rico,BQN
 Aguascaliente,Mexico,AGU
+Ağrı Havalimanı (Gümrüksüz),Türkiye,AJI
 Ahmedabad,India,AMD
 Aiyura,Papua New Guinea,AYU
 Ajaccio,France,AJA
@@ -163,6 +164,7 @@ Basse-Terre - Pointe-à-Pitre International Airport,Guadeloupe,PTP
 Basseterre - Robert L. Bradshaw International Airport,Saint Kitts and Nevis,SKB
 Bastia,France,BIA
 Baton Rouge (LA) - Baton Rouge Metropolitan Airport,USA,BTR
+Batman Havalimanı (Gümrüksüz),Türkiye,BAL
 Bayreuth - Bindlacher-Berg,Germany,BYU
 Beaumont/Pt. Arthur (TX),USA,BPT
 Beckley (WV),USA,BKW
@@ -202,6 +204,7 @@ Biarritz,France,BIQ
 Bilbao,Spain,BIO
 Billings (MT),USA,BIL
 Billund,Denmark,BLL
+Bingöl Havalimanı (Gümrüksüz),Türkiye,BGG
 Bintulu,Malaysia,BTU
 Biraro,Central African Republic,IRO
 Birmingham - Birmingham International Airport,United Kingdom,BHX
@@ -274,6 +277,7 @@ Burbank (CA),USA,BUR
 Burlington IA,USA,BRL
 Burlington (VT),USA,BTV
 Burnie (Wynyard),Australia,BWT
+Yenişehir Bursa Havalimanı (Gümrüksüz),Türkiye,YEI
 Butte (MT),USA,BTM
 Cabinda,Angola,CAB
 Cagliari,Italy,CAG
@@ -403,6 +407,7 @@ Culiacan,Mexico,CUL
 Curacao - Curaçao International Airport,Netherlands Antilles,CUR
 Curitiba - Afonso Pena International Airport,Brazil,CWB
 Cuyo,Philippines,CYU
+Çanakkale Havalimanı (Gümrüksüz),Türkiye,CKZ
 Dakar - Léopold Sédar Senghor International Airport,Senegal,DKR
 Dalaman,Turkiye,DLM
 Dalby,Australia,DBY
@@ -635,6 +640,7 @@ Hagåtña - Guam International Airport,Guam,GUM
 Haifa,Israel,HFA
 Haines (AK),USA,HNS
 Hakodate,Japan,HKD
+Hakkari Havalimanı (Gümrüksüz),Türkiye,YKO
 Halifax International,Canada,YHZ
 Hall Beach,Canada,YUX
 Hamburg - Fuhlsbuettel,Germany,HAM
@@ -654,6 +660,7 @@ Harrington Harbour PQ,Canada,YHR
 Harrisburg (PA) - Harrisburg Skyport,USA,HAR
 Harrisburg (PA) - Harrisburg International,USA,MDT
 Hartford (CT) /Springfield (MA),USA,BDL
+Hatay Havalimanı (Gümrüksüz),Türkiye,HTY
 Hatyai (Hat Yai),Thailand,HDY
 Haugesund,Norway,HAU
 Havana - José Martí International,Cuba,HAV
@@ -701,6 +708,7 @@ Hyderabad,Pakistan,HDD
 Ibiza,Ibiza/Spain,IBZ
 Idaho Falls (ID),USA,IDA
 Iguazu Cataratas,Argentina,IGR
+Iğdır Havalimanı (Gümrüksüz),Türkiye,IGD
 Ile des Pins,New Caledonia,ILP
 Ile Ouen,New Caledonia,IOU
 Iliamna (AK),USA,ILI
@@ -723,7 +731,7 @@ Ishigaki - New Ishigaki Airport,Japan,ISG
 Islamabad - Benazir Bhutto International Airport,Pakistan,ISB
 Islay,United Kingdom,ILY
 Isle of Man,,IOM
-Istanbul - Istanbul Atatürk Airport,Turkiye,IST
+Istanbul - Istanbul Atatürk Airport,Turkiye,ATA
 Istanbul - Sabiha Gokcen,Turkiye,SAW
 Ithaca/Cortland (NY),USA,ITH
 Ivalo,Finland,IVL
@@ -864,6 +872,7 @@ Kars,Turkiye,KYS
 Karumba,Australia,KRB
 Karup,Denmark,KRP
 Kaschechawan PQ,Canada,ZKE
+Kastamonu Havalimanı (Gümrüksüz),Türkiye,KFS
 Kassala,Sudan,KSL
 Katherine,Australia,KTR
 Kathmandu - Tribhuvan International Airport,Nepal,KTM
@@ -1147,6 +1156,7 @@ Merced (CA),USA,MCE
 Merida,Mexico,MID
 Meridian (MS),USA,MEI
 Merimbula,Australia,MIM
+Merzifon Havalimanı (Gümrüksüz),Türkiye,MZH
 Messina,South Africa,MEZ
 Metlakatla (AK),USA,MTM
 Metz -  Frescaty,France,MZM
@@ -1237,7 +1247,7 @@ Mulhouse,France,MLH
 Multan,Pakistan,MUX
 Murcia,Spain,MJV
 Murmansk,Russia,MMK
-Mus,Turkiye,MSR
+Muş Havalimanı (Gümrüksüz),Türkiye,MSR
 Muscat - Seeb,Oman,MCT
 Muscle Shoals (AL),USA,MSL
 Muskegon (MI),USA,MKG
@@ -1659,6 +1669,7 @@ Shreveport La,USA,SHV
 Shute Harbour,Australia,JHQ
 Sibu,Malaysia,SBW
 Sidney (MT),USA,SDY
+Siirt Havalimanı (Gümrüksüz),Türkiye,SXZ
 Silistra,Bulgaria,SLS
 Simferopol,Ukraine,SIP
 Sindhri,Pakistan,MPD
@@ -1737,6 +1748,8 @@ Swakopmund,Namibia,SWP
 Sydney - Sydney Airport,Australia,SYD
 Sylhet,Bangladesh,ZYL
 Syracuse (NY),USA,SYR
+Şırnak Havalimanı (Gümrüksüz),Türkiye,NKT
+Şanlıurfa Havalimanı,Türkiye,GNY
 Tabuk,Saudi Arabia,TUU
 Taif,Saudi Arabia,TIF
 Taipei - Chiang Kai Shek,Taiwan,TPE
@@ -1774,3 +1787,8 @@ Termez (Termes),Uzbekistan,TMZ
 Terrace,Canada,YXT
 Teresopolis,Brazil,TEC
 Teterboro (NJ),USA,TEB
+Tokat Havalimanı,Türkiye,TJK
+Trabzon Havalimanı,Türkiye,TZX
+Uşak Havalimanı (Gümrüksüz),Türkiye,USQ
+Van Havalimanı,Türkiye,VAN
+Zonguldak Havalimanı (Gümrüksüz),Türkiye,ONQ
