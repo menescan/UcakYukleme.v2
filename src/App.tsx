@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from "@/components/theme-provider"
 
 import Index from './pages/Index';
+import ManualBalance from './pages/ManualBalance';
 import NotFound from './pages/NotFound';
 
 const queryClient = new QueryClient();
@@ -17,6 +18,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/manual-balance" element={<ManualBalance />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +12,8 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { RadioactiveCheck } from '@/components/ui/radioactive-check';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Calculator } from 'lucide-react';
+import { TRANSLATIONS, Language } from '@/utils/translations';
 import {
   Accordion,
   AccordionContent,
@@ -214,93 +216,6 @@ type AircraftConfig = IAircraftConfig;
 // Previously: typeof AIRCRAFT_CONFIGS[keyof typeof AIRCRAFT_CONFIGS];
 // We override this to be more permissive for the build.
 
-// Translations
-const TRANSLATIONS = {
-  TR: {
-    appTitle: '✈️ Uçak Kargo Yöneticisi',
-    appSubtitle: 'Balans hesaplama yardım sistemi',
-    appFooter: 'Muhammed Enes İŞCAN tarafından geliştirildi',
-    radioactive: 'Radyoaktif Kargo Girişi',
-    aircraftSelectTitle: 'Uçak Seçimi',
-    aircraftSelectPlaceholder: 'Uçak modelini seçin',
-    wideBodyLabel: 'Geniş Gövde (A330/A350/B777/B787)',
-    loadingTypeTitle: 'Yükleme Tipi',
-    bulkLoading: 'Bulk Yükleme',
-    uldLoading: 'ULD Yükleme',
-    totalBags: 'Toplam Bagaj Sayısı',
-    totalBagWeight: 'Toplam Bagaj Ağırlığı (kg)',
-    avgBagWeight: 'Ortalama Bagaj Ağırlığı (kg)',
-    waterPercentTitle: 'Su Yüzdesi Seçimi',
-    waterPercentWideTitle: 'Su Yüzdesi (Geniş Gövde)',
-    aircraftType: 'Uçak Tipi',
-    tailNumber: 'Kuyruk (Örn: JNA)',
-    tailPlaceholder: 'Kuyruk Giriniz',
-    tailNotFound: 'Kuyruk listede bulunamadı! Lütfen kontrol ediniz.',
-    waterRatio: 'Su Oranı',
-    aircraft: 'Uçak',
-    percent: 'Yüzde',
-    indexMac: 'İndeks / MAC',
-    compartments: 'Kompartmanlar',
-    bagCount: 'Bagaj Sayısı',
-    cargoWeight: 'Kargo Ağırlığı', // For Bulk
-    cargoWeightKg: 'Kargo Ağırlığı (kg)',
-    emptyUld: 'Boş ULD',
-    uldTypeData: 'ULD Tipi / Ağırlığı',
-    uldWeight: 'ULD Ağırlığı (kg)',
-    eicSettings: 'EIC Ayarları',
-    eicWeight: 'EIC Ağırlığı (kg)',
-    eicComp: 'EIC Kompartmanı',
-    eicModelSelect: 'Uçak Tipi (EIC Varsayılanı İçin)',
-    modelSelectPlace: 'Model Seçin',
-    selectPlace: 'Seçin',
-    total: 'Toplam:',
-    confirmClear: 'Tüm verileri temizlemek istediğinize emin misiniz?',
-    type: 'Tip',
-  },
-  EN: {
-    appTitle: '✈️ Aircraft Cargo Manager',
-    appSubtitle: 'Balance calculation assistant system',
-    appFooter: 'Developed by Muhammed Enes ISCAN',
-    radioactive: 'Radioactive Cargo Entry',
-    aircraftSelectTitle: 'Aircraft Selection',
-    aircraftSelectPlaceholder: 'Select aircraft model',
-    wideBodyLabel: 'Wide Body (A330/A350/B777/B787)',
-    loadingTypeTitle: 'Loading Type',
-    bulkLoading: 'Bulk Loading',
-    uldLoading: 'ULD Loading',
-    totalBags: 'Total Baggage Count',
-    totalBagWeight: 'Total Baggage Weight (kg)',
-    avgBagWeight: 'Average Baggage Weight (kg)',
-    waterPercentTitle: 'Water Percentage Selection',
-    waterPercentWideTitle: 'Water Percentage (Wide Body)',
-    aircraftType: 'Aircraft Type',
-    tailNumber: 'Tail (e.g. JNA)',
-    tailPlaceholder: 'Enter Tail',
-    tailNotFound: 'Tail not found in list! Please check.',
-    waterRatio: 'Water Ratio',
-    aircraft: 'Aircraft',
-    percent: 'Percent',
-    indexMac: 'Index / MAC',
-    compartments: 'Compartments',
-    bagCount: 'Baggage Count',
-    cargoWeight: 'Cargo Weight',
-    cargoWeightKg: 'Cargo Weight (kg)',
-    emptyUld: 'Empty ULD',
-    uldTypeData: 'ULD Type / Weight',
-    uldWeight: 'ULD Weight (kg)',
-    eicSettings: 'EIC Settings',
-    eicWeight: 'EIC Weight (kg)',
-    eicComp: 'EIC Compartment',
-    eicModelSelect: 'Aircraft Type (For EIC Default)',
-    modelSelectPlace: 'Select Model',
-    selectPlace: 'Select',
-    total: 'Total:',
-    confirmClear: 'Are you sure you want to clear all data?',
-    type: 'Type',
-  }
-} as const;
-
-type Language = 'TR' | 'EN';
 
 const DigitalClock = React.memo(({ type }: { type: 'local' | 'utc' }) => {
   const [time, setTime] = useState(new Date());
@@ -332,46 +247,45 @@ interface HeaderProps {
   language: Language;
   onToggleLanguage: () => void;
 }
-const Header = React.memo(({ onClearData, language, onToggleLanguage }: HeaderProps) => (
-  <div className="text-center space-y-4 mb-6 relative">
-    {/* Language Toggle - Absolute Top Left/Right or just centered? User said "en üste ufak TR ve EN yazısı lazım" 
-        "başsına bir tane EN koy" -> Maybe top left or right corner? 
-        I'll put it top right absolute.
-    */}
-    <div className="absolute top-0 right-0">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={onToggleLanguage}
-        className="text-xs font-bold px-2 py-1 h-auto"
-      >
-        {language === 'TR' ? 'EN' : 'TR'}
-      </Button>
-    </div>
+const Header = React.memo(({ onClearData, language, onToggleLanguage }: HeaderProps) => {
+  return (
+    <div className="text-center space-y-4 mb-6 relative">
+      {/* Language Toggle */}
+      <div className="absolute top-0 right-0">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onToggleLanguage}
+          className="text-xs font-bold px-2 py-1 h-auto"
+        >
+          {language === 'TR' ? 'EN' : 'TR'}
+        </Button>
+      </div>
 
-    <div className="space-y-1 pt-2">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">{TRANSLATIONS[language].appTitle}</h1>
-      <p className="text-sm text-gray-600 dark:text-slate-400">{TRANSLATIONS[language].appSubtitle}</p>
-      <p className="text-xs text-gray-400 dark:text-slate-500 opacity-60">{TRANSLATIONS[language].appFooter}</p>
-    </div>
+      <div className="space-y-1 pt-2">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">{TRANSLATIONS[language].appTitle}</h1>
+        <p className="text-sm text-gray-600 dark:text-slate-400">{TRANSLATIONS[language].appSubtitle}</p>
+        <p className="text-xs text-gray-400 dark:text-slate-500 opacity-60">{TRANSLATIONS[language].appFooter}</p>
+      </div>
 
-    <div className="flex items-center justify-center gap-3 bg-white/50 dark:bg-slate-800/50 p-2 rounded-lg w-fit mx-auto backdrop-blur-sm">
-      <DigitalClock type="local" />
-      <ThemeToggle />
-      <DigitalClock type="utc" />
-      <Separator orientation="vertical" className="h-6" />
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={onClearData}
-        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-        title="Verileri Temizle"
-      >
-        <Trash2 className="h-4 w-4" />
-      </Button>
+      <div className="flex items-center justify-center gap-3 bg-white/50 dark:bg-slate-800/50 p-2 rounded-lg w-fit mx-auto backdrop-blur-sm">
+        <DigitalClock type="local" />
+        <ThemeToggle />
+        <DigitalClock type="utc" />
+        <Separator orientation="vertical" className="h-6" />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onClearData}
+          className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+          title="Verileri Temizle"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
-  </div>
-));
+  );
+});
 Header.displayName = 'Header';
 
 interface AirportSelectorProps {
@@ -1208,6 +1122,7 @@ const WeightSummary: React.FC<WeightSummaryProps> = React.memo(({ aircraftConfig
 WeightSummary.displayName = 'WeightSummary';
 
 const Index = () => {
+  const navigate = useNavigate();
   // Helper hook for persistent state
   // Helper hook for persistent state
   const usePersistentState = <T,>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] => {
@@ -1463,6 +1378,19 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-950 dark:to-slate-900 p-4 transition-colors duration-300">
       <div className="max-w-md mx-auto space-y-6 pb-12">
         <Header onClearData={handleClearData} language={language} onToggleLanguage={handleToggleLanguage} />
+
+        <div className="flex justify-end px-1">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate('/manual-balance')}
+            className="text-xs h-8 gap-2 bg-white/50 dark:bg-slate-800/50 border-0 shadow-sm hover:bg-white/80 dark:hover:bg-slate-800/80"
+          >
+            <Calculator className="h-3.5 w-3.5" />
+            {TRANSLATIONS[language].manualBalanceTitle}
+          </Button>
+        </div>
+
         <AirportSelector iataCode={iataCode} setIataCode={setIataCode} airportInfo={airportInfo} setAirportInfo={setAirportInfo} />
 
         <RadioactiveToggleButton show={showRadioactive} onToggle={setShowRadioactive} language={language} />
